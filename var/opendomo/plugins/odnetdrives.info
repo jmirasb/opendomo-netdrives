@@ -1,0 +1,5 @@
+DESCRIPTION="Share drives in local network" 
+REQUIRED_BYTES="1000000" 
+SCREENSHOTS="https://github.com/jmirasb/opendomo-netdrives/screenshot1.png" 
+SCHEME="FEFABA FFFFFF" 
+ICON="odnetdrives.png"
