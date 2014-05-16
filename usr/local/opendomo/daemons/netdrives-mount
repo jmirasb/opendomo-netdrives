@@ -1,0 +1,74 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          netdrives-mount
+# Required-Start:    $network
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 6
+# Short-Description: Mount network drives
+# Description:       Mount shared drives in the network
+### END INIT INFO
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+CNFFILE="/etc/opendomo/system/fstab"
+PIDFILE="/var/opendomo/run/netd-mount.pid"
+
+NFSOPTS="rw,nolock"
+
+do_start () {
+    # Mounting all shared drives
+    touch $PIDFILE
+
+    # Creating directories and mount
+    for drive in `cat $CNFFILE | awk '{print$2}'`; do
+        MEDIALNK=`basename "$drive"`
+        mkdir -p "$drive"
+        ln -s "$drive" "/media/$MEDIALNK"
+    done
+    sudo mount -a
+}
+
+do_stop () {
+    # Stop all shared devices
+    sudo umount -a -t nfs,smb
+    rm $PIDFILE
+}
+
+case "$1" in
+    start)
+        log_action_begin_msg "Mount shared drives"
+        if ! test -f $PIDFILE; then
+            do_start
+        fi
+        log_end_msg $?
+    ;;
+    stop)
+        log_action_begin_msg "Umounting shared drives"
+        do_stop
+        log_end_msg $?
+    ;;
+    status)
+        if test -f $PIDFILE; then
+            echo "The service is running"
+            exit 0
+        else
+            echo "Service not started"
+            exit 1
+        fi
+    ;;
+    restart)
+        log_daemon_msg "Mounting shared drives..."
+        do_stop
+        do_start
+        log_end_msg $?
+    ;;
+    *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+esac
+
+:
