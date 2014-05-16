@@ -10,7 +10,7 @@ IFS=$'\x0A'$'\x0D'
 
 echo "#> Authorized hosts"
 echo "list:`basename $0`	detailed"
-if test -z "$HOSTSCONF"; then
+if test -z `cat $HOSTSCONF`; then
     echo "#WARN No hosts configured yet"
 else
     for host in `cat $HOSTSCONF`; do
@@ -32,14 +32,11 @@ for local in `cat $DRIVECONF`; do
 done
 for remote in `cat $REMDRIVES`; do
     # Extracting samba or nfs configuration
-    MOUNTPOINT=`echo $remote | awk '{print$2}' | sed 's/\/run\/mounts\///'`
-    ADDRESS=`echo $MOUNTPOINT | cut -f1 -d-`
-    DEVICE=`echo $MOUNTPOINT | cut -f2 -d-`
-
+    DEVICE=`echo $remote | awk '{print$2}' | sed 's/\/run\/mounts\///'`
     if ! test -z `echo $remote | grep ":"`; then
-        echo "	-$MOUNTPOINT	$DEVICE in $ADDRESS	device	NFS device"
+        echo "	-$DEVICE	$DEVICE	device	NFS device"
     else
-        echo "	-$MOUNTPOINT	$DEVICE in $ADDRESS	device	SMB device"
+        echo "	-$DEVICE	$DEVICE	device	SMB device"
     fi
 done
 
