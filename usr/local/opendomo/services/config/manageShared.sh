@@ -32,11 +32,14 @@ for local in `cat $DRIVECONF`; do
 done
 for remote in `cat $REMDRIVES`; do
     # Extracting samba or nfs configuration
-    DEVICE=`echo $remote | awk '{print$2}' | sed 's/\/run\/mounts\///'`
+    MOUNTPOINT=`echo $remote | awk '{print$2}' | sed 's/\/run\/mounts\///'`
+    ADDRESS=`echo $MOUNTPOINT | cut -f1 -d-`
+    DEVICE=`echo $MOUNTPOINT | cut -f2 -d-`
+
     if ! test -z `echo $remote | grep ":"`; then
-        echo "	-$DEVICE	$DEVICE	device	NFS device"
+        echo "	-$MOUNTPOINT	$DEVICE in $ADDRESS	device	NFS device"
     else
-        echo "	-$DEVICE	$DEVICE	device	SMB device"
+        echo "	-$MOUNTPOINT	$DEVICE in $ADDRESS	device	SMB device"
     fi
 done
 

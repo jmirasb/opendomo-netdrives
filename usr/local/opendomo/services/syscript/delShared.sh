@@ -10,22 +10,30 @@ DRIVE="$1"
 
 if test -z "$1"; then
     echo "#ERRO You need select drive"
-    /usr/local/opendomo/manageShared.sh
 else
-    # Search drive in local or remote
-    if test -d "$MOUNTSDIR/$DRIVE"; then
-        # Remote resource
-        OTHERS=`grep -v "$MOUNTSDIR/$DRIVE" $REMOTECONF`
-	echo "$OTHERS" > $REMOTECONF
+    # Stop service
+    echo "#WARN Unmounting all shared devices"
+    sudo changestate.sh service netdrives-mount off
 
-        echo "#INFO Remote drive $DRIVE deleted"
-        /usr/local/opendomo/manageShared.sh
-    else
-        # Local drive
-        OTHERS=`grep -v "/media/$DRIVE" $LOCALCONF`
-        echo "$OTHERS" > $LOCALCONF
+    # Multiple imput support
+    for drive in "$@"; do
+        # Search drive in local or remote
+        if test -d "$MOUNTSDIR/$drive"; then
+            # Remote resource
+            OTHERS=`grep -v "$MOUNTSDIR/$drive" $REMOTECONF`
+	    echo "$OTHERS" > $REMOTECONF
+            rmdir "$MOUNTSDIR/$drive"
 
-        echo "#INFO Shared drive $DRIVE deleted"
-        /usr/local/opendomo/manageShared.sh
-    fi
+            echo "#INFO Remote drive $drive deleted"
+        else
+            # Local drive
+            OTHERS=`grep -v "/media/$drive" $LOCALCONF`
+            echo "$OTHERS" > $LOCALCONF
+
+            echo "#INFO Shared drive $drive deleted"
+        fi
+    done
 fi
+
+# Return manage shared
+/usr/local/opendomo/manageShared.sh

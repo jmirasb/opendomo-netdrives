@@ -25,15 +25,22 @@ do_start () {
 
     # Creating directories and mount
     for drive in `cat $CNFFILE | awk '{print$2}'`; do
-        MEDIALNK=`basename "$drive"`
+        DRIVE=`basename "$drive" | cut -f2 -d-`
+	SERVER=`basename "$drive" | cut -f1 -d-`
         mkdir -p "$drive"
-        ln -s "$drive" "/media/$MEDIALNK"
+        ln -s "$drive" "/media/$DRIVE in $SERVER"
     done
     sudo mount -a
 }
 
 do_stop () {
     # Stop all shared devices
+    for drive in `cat $CNFFILE | awk '{print$2}'`; do
+        DRIVE=`basename "$drive" | cut -f2 -d-`
+	SERVER=`basename "$drive" | cut -f1 -d-`
+        rm "/media/$DRIVE in $SERVER"
+    done
+
     sudo umount -a -t nfs,smb
     rm $PIDFILE
 }
