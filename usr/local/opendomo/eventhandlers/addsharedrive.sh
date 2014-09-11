@@ -1,5 +1,5 @@
 #!/bin/sh
-#desc: Share device
+#desc: Add share device
 
 # As a Event Handler, the first and second parameters are the level and package.
 # The third parameter is text and the fourth is a path to a file. In this case,
