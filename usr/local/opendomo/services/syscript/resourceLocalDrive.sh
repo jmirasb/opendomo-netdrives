@@ -9,8 +9,6 @@ CONFFILE="/media/$DRIVE/opendomo.cfg"
 # Check config file
 if test -f "$CONFFILE"; then
     source $CONFFILE
-else
-    exit 1
 fi
 
 # Configure drive
