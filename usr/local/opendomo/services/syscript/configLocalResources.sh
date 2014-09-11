@@ -22,7 +22,7 @@ elif test  `echo "$1" | grep "SFTP File Transfer"`; then
 elif test  `echo "$1" | grep "Web Site"`; then
     resourceWEBServer.sh
 elif test  `echo "$1" | grep "Local Drive"`; then
-    resourceLocalDrive.sh
+    resourceLocalDrive.sh "$1"
 else
     # Adding services to temporal file
     rm $HOSTSERV
