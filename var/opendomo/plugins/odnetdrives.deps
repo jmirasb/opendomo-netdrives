@@ -1,1 +1,1 @@
-nfs-kernel-server portmap cifs-utils samba avahi-utils libnss-mdns smclient
+nfs-kernel-server portmap cifs-utils samba avahi-utils libnss-mdns smbclient
