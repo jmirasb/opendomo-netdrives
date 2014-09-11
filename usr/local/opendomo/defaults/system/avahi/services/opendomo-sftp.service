@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+    <name replace-wildcards="yes">%h SFTP server</name>
+    <service>
+        <type>_sftp-ssh._tcp</type>
+        <port>22</port>
+        <txt-record>path=/media</txt-record>
+    </service>
+</service-group>
