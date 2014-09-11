@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          netdrives-mount
+# Provides:          netmount
 # Required-Start:    $network
 # Required-Stop:
 # Should-Start:
@@ -24,38 +24,34 @@ do_start () {
     touch $PIDFILE
 
     # Creating directories and mount
-    for drive in `cat $CNFFILE | awk '{print$2}'`; do
-        DRIVE=`basename "$drive" | cut -f2 -d-`
-	SERVER=`basename "$drive" | cut -f1 -d-`
-        mkdir -p "$drive"
-        ln -s "$drive" "/media/$DRIVE in $SERVER"
+    for dir in `cat $CNFFILE | awk '{print$2}'`; do
+        mkdir -p "$dir"
     done
-    sudo mount -a
+    sudo mount -a -t nfs,cifs  &>/dev/null
 }
 
 do_stop () {
-    # Stop all shared devices
-    for drive in `cat $CNFFILE | awk '{print$2}'`; do
-        DRIVE=`basename "$drive" | cut -f2 -d-`
-	SERVER=`basename "$drive" | cut -f1 -d-`
-        rm "/media/$DRIVE in $SERVER"
-    done
+    sudo umount -a -t nfs,cifs &>/dev/null
+    sleep 1
 
-    sudo umount -a -t nfs,smb
+    # Stop all shared devices
+    for dir in `cat $CNFFILE | awk '{print$2}' | cut -f3 -d"/" | uniq`; do
+        cd /media/$dir
+        rmdir *
+        rmdir "/media/$dir"
+    done
     rm $PIDFILE
 }
 
 case "$1" in
     start)
         log_action_begin_msg "Mount shared drives"
-        if ! test -f $PIDFILE; then
-            do_start
-        fi
+        test -f $PIDFILE || do_start
         log_end_msg $?
     ;;
     stop)
         log_action_begin_msg "Umounting shared drives"
-        do_stop
+        test -f $PIDFILE  && do_stop
         log_end_msg $?
     ;;
     status)
@@ -77,5 +73,3 @@ case "$1" in
     echo "Usage: $0 {start|stop|restart|status}"
     exit 1
 esac
-
-:
