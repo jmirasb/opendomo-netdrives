@@ -15,11 +15,9 @@ else
     IP=`grep -c $1 $CONF`
     if test $IP != 0; then
         echo "#ERR This host is already configured"
+        resourceNFSServer.sh
     else
         echo "portmap: $2	#$1" >> $CONF
-        echo "#INFO Server host configuration added."
-        echo "#WARN You need reboot service"
-
-        /usr/local/opendomo/manageShared.sh
-    fi
+        resourceNFSServer.sh
+   fi
 fi

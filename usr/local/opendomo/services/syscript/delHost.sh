@@ -7,15 +7,9 @@ CONF="/etc/opendomo/system/hosts.allow"
 
 if test -z $1; then
     echo "#ERROR You need select host to delete"
-    /usr/local/opendomo/manageHosts.sh
+    resourceNFSServer.sh
 else
-    for host in $@; do
-        CONFIG=`grep -v $host $CONF`
-        echo "$CONFIG" > "$CONF"
-
-        echo "#INFO Server host configuration deleted."
-        echo "#WARN You need reboot service"
-    done
+    CONFIG=`grep -v $1 $CONF`
+    echo "$CONFIG" > "$CONF"
+    resourceNFSServer.sh
 fi
-
-/usr/local/opendomo/manageShared.sh
